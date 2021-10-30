@@ -22,6 +22,7 @@ async function run() {
         await client.connect();
         // Establish and verify connection
         const collection = client.db("tour_planner").collection("events");
+        const orderCollection = client.db("tour_planner").collection("orders");
 
         // add event 
         app.post('/addEvent', async (req, res) => {
@@ -29,6 +30,30 @@ async function run() {
             console.log(data);
             const result = await collection.insertOne(data)
             res.json(result)
+        })
+
+        //add orders
+        app.post('/addOrders', async (req, res) => {
+            const data = req.body;
+            console.log(data);
+            const result = await orderCollection.insertOne(data);
+            res.json(result);
+        })
+
+        // user orders
+        app.get('/myOrders/:userEmail', async (req, res) => {
+            const user = req.params.userEmail;
+            const result = await orderCollection.find({ email: user }).toArray();
+            res.json(result)
+        })
+
+        //delete order
+        app.delete('/orderDelete/:deleteOrderId', async (req, res) => {
+            const id = req.params.deleteOrderId;
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(query);
+            console.log(result);
+            res.json(result);
         })
 
         // Get all events
