@@ -55,9 +55,9 @@ async function run() {
         // update /PUT order status
         app.put('/updateStatus/:updateId/:currentStatus', async (req, res) => {
             const orderId = req.params.updateId;
-            const status = req.params.currentStatus;
+            const updateStatus = req.params.currentStatus;
             const find = { _id: ObjectId(orderId) };
-            const updateDoc = { $set: { status: status === "approved" ? "pending" : "approved" } };
+            const updateDoc = { $set: { status: updateStatus } };
             const result = await orderCollection.updateOne(find, updateDoc)
             res.json(result);
         })
