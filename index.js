@@ -27,7 +27,7 @@ async function run() {
         //get last 8 events from database for home page
         app.get('/homePageShowEvent', async (req, res) => {
 
-            const result = await collection.find({}).sort({ _id: -1 }).limit(6).toArray();
+            const result = await collection.find({}).sort({ _id: -1 }).limit(8).toArray();
             res.json(result);
         })
 
