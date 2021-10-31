@@ -24,6 +24,11 @@ async function run() {
         const collection = client.db("tour_planner").collection("events");
         const orderCollection = client.db("tour_planner").collection("orders");
 
+        // Get all events
+        app.get('/allEvents', async (req, res) => {
+            const result = await collection.find({}).toArray();
+            res.send(result)
+        })
         // add event 
         app.post('/addEvent', async (req, res) => {
             const data = req.body;
@@ -35,8 +40,25 @@ async function run() {
         //add orders
         app.post('/addOrders', async (req, res) => {
             const data = req.body;
-            console.log(data);
             const result = await orderCollection.insertOne(data);
+            res.json(result);
+        })
+
+        //all orders
+        app.get('/allOrders', async (req, res) => {
+            // collect data by descending format. last insert get first
+            const query = { _id: -1 }
+            const result = await orderCollection.find({}).sort(query).toArray();
+            res.json(result);
+        })
+
+        // update /PUT order status
+        app.put('/updateStatus/:updateId/:currentStatus', async (req, res) => {
+            const orderId = req.params.updateId;
+            const status = req.params.currentStatus;
+            const find = { _id: ObjectId(orderId) };
+            const updateDoc = { $set: { status: status === "approved" ? "pending" : "approved" } };
+            const result = await orderCollection.updateOne(find, updateDoc)
             res.json(result);
         })
 
@@ -56,11 +78,6 @@ async function run() {
             res.json(result);
         })
 
-        // Get all events
-        app.get('/allEvents', async (req, res) => {
-            const result = await collection.find({}).toArray();
-            res.send(result)
-        })
 
         console.log("Connected successfully to mongodb database");
     }
