@@ -24,6 +24,13 @@ async function run() {
         const collection = client.db("tour_planner").collection("events");
         const orderCollection = client.db("tour_planner").collection("orders");
 
+        //get last 8 events from database for home page
+        app.get('/homePageShowEvent', async (req, res) => {
+
+            const result = await collection.find({}).sort({ _id: -1 }).limit(6).toArray();
+            res.json(result);
+        })
+
         // Get all events
         app.get('/allEvents', async (req, res) => {
             const result = await collection.find({}).toArray();
